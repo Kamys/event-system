@@ -1,0 +1,56 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://client-parcel:1234@127.0.0.1:27018,127.0.0.1:27019,127.0.0.1:27020/parcel-db?replicaSet=rs0
+  kafka:
+    bootstrap-servers: localhost:12345
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: 0
+      retries: 0
+      properties:
+        enable.idempotence: false
+        max.block.ms: 2000
+        request.timeout.ms: 100
+        batch.size: 500
+        max.request.size: 500
+        buffer.memory: 500
+        max.in.flight.requests.per.connection: 5
+    consumer:
+      group-id: parcel-service
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        enable.auto.commit: false
+        reconnect.backoff.ms: 500
+        reconnect.backoff.max.ms: 1000
+        retry.backoff.ms: 100
+logging:
+  level:
+    root: INFO
+    sun.rmi.loader: INFO
+    javax.management.remote.rmi: INFO
+    sun.rmi.transport.tcp: INFO
+    my.test.request.service: INFO
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+otel:
+  service:
+    name: kafka-test-otel
+  metrics:
+    exporter: otlp
+  traces:
+    exporter: otlp
+  exporter:
+    otlp:
+      endpoint: http://localhost:4317
+      protocol: grpc

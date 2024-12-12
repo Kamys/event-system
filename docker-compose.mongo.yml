@@ -1,0 +1,50 @@
+networks:
+  mongo-network:
+    driver: bridge
+
+services:
+  mongo-replica-1:
+    image: mongo:8.0.3
+    container_name: mongo-replica-1
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 1234
+      MONGO_INITDB_DATABASE: parcel-db
+    volumes:
+      - ./setting-replica.js:/docker-entrypoint-initdb.d/setting-replica.js
+      - ./mongo.keyfile:/etc/mongo.keyfile:ro
+    command: mongod --keyFile /etc/mongo.keyfile --replSet rs0 --bind_ip localhost,mongo-replica-1
+    ports:
+      - "27018:27017"
+    networks:
+      - mongo-network
+
+  mongo-replica-2:
+    image: mongo:8.0.3
+    container_name: mongo-replica-2
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 1234
+      MONGO_INITDB_DATABASE: parcel-db
+    volumes:
+      - ./mongo.keyfile:/etc/mongo.keyfile:ro
+    command: mongod --keyFile /etc/mongo.keyfile --replSet rs0 --bind_ip localhost,mongo-replica-2
+    ports:
+      - "27019:27017"
+    networks:
+      - mongo-network
+
+  mongo-replica-3:
+    image: mongo:8.0.3
+    container_name: mongo-replica-3
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 1234
+      MONGO_INITDB_DATABASE: parcel-db
+    volumes:
+      - ./mongo.keyfile:/etc/mongo.keyfile:ro
+    command: mongod --keyFile /etc/mongo.keyfile --replSet rs0 --bind_ip localhost,mongo-replica-3
+    ports:
+      - "27020:27017"
+    networks:
+      - mongo-network
